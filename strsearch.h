@@ -15,24 +15,23 @@ typedef struct pattern_index_list
 	int index;
 }index_list;
 
-void add_index(index_list* list,int index);
 
 struct pattern_info
 {
 	char* pat;
 	int patlen;
 	int* faif;
-
-	int ret_nums;
 	index_list list;
 };
-
+void add_index(index_list* list,int index);
 int getsize(char *str_buffer);
-void match_str_pattern(char* str,struct pattern_info* info);
-void init_pattern(struct pattern_info* info,char *pattern,int retnum);
-void subs_str_to(char* str,char* pat,char* to,int pre);
+void subs_str_to(char* str,struct pattern_info* info,char* to,int pre);
 int* failure(char *str);
 void kmpMatch(char*,struct pattern_info*);
+
+void kmp_str_pattern(char* str,char* pat,struct pattern_info* info);
+void sub_all_pattern(char* str,char* pat);
+
 
 
 #endif /* STRSEARCH_H_ */

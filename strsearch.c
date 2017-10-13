@@ -5,10 +5,9 @@
 int getsize(char *str_buffer);
 
 
-void init_pattern(struct pattern_info* info,char *pattern,int retnum)
+static void init_pattern(struct pattern_info* info,char *pattern)
 {
 	int pattern_length = strlen(pattern);
-	info->ret_nums = retnum;
 	info->patlen = pattern_length;
 	info->pat = malloc(pattern_length);
 	memcpy(info->pat,pattern,pattern_length);
@@ -17,7 +16,6 @@ void init_pattern(struct pattern_info* info,char *pattern,int retnum)
 
 
 
-void match_str_pattern(char* str,struct pattern_info* info);
 
 int* failure(char *str)
 {
@@ -58,11 +56,11 @@ void kmpMatch(char* str,struct pattern_info* info)
  	 *  when no char match while loop will decrease q to zero
  	 *  and chech the first char */
 	/*pattern part*/
-	int str_length = strlen(info->pat);
+	int pat_length = strlen(info->pat);
 
-	int* failf = malloc(sizeof(int)*(str_length+1));
+	int* failf = malloc(sizeof(int)*(pat_length+1));
 	int k=0;
-	for(int q=1;q<str_length;q++)
+	for(int q=1;q<pat_length;q++)
 	{
 		while( k!=0 && info->pat[k]!=info->pat[q])k =failf[k];
 		if(info->pat[k]==info->pat[q])
@@ -71,45 +69,41 @@ void kmpMatch(char* str,struct pattern_info* info)
 	}
 
 	/*matching part*/
-	str_length = strlen(str);
+	int str_length = strlen(str);
 	k=0;
 	for(int i=0;i<str_length;i++)
 	{
-		while(q>0&&info->pat[k]!=str[i])
+		while(k>0&&info->pat[k]!=str[i])
 			k = failf[k];
 		if(info->pat[k]==str[i])
 			k++;
 		if(k==info->patlen)
+		{
 			k=failf[k];
+			add_index(&(info->list),i-pat_length+1);
+		}
 	}
 	free(failf);
 }
 
 
-void zMatch(char* str,struct pattern_info* info)
+int* zfunc(char* str)
 {
-	int rescount = 0;
-	int size = info->ret_nums;
 	int strlen = getsize(str);
-	int patlen = info->patlen;
-
 	int* ptrn_z = malloc(sizeof(int)*(strlen));
+
 	int L=0,R=0;
 	for(int i=1;i<strlen;i++)
 	{
 		int ii = i-L;
-		int index = i-patlen;
 		if(i>R)
 		{
 			int x = i;
 			while( x < strlen && str[x]==str[x-i])x++;
 			ptrn_z[i] = x-i;
 			if(x>i)R=x-1;L=i;
-			if(ptrn_z[i]>=patlen&&rescount<size&&index>=0)
-			{
-				add_index(&(info->list),index);
-				rescount++;
-			}
+			if(str[x]==str[x-i])
+				ptrn_z[i]= x-i;
 		}
 		else if(ptrn_z[ii]>=R-i+1)
 		{
@@ -117,16 +111,13 @@ void zMatch(char* str,struct pattern_info* info)
 			while( x < strlen && str[x]==str[x-i])x++;
 			ptrn_z[i] = x-i;
 			L = i;R = x-1;
-			if(ptrn_z[i]>=patlen&&rescount<size&&index>=0)
-			{
-				add_index(&(info->list),index);
-				rescount++;
-			}
+			if(str[x]==str[x-i])
+				ptrn_z[i]= x-i;
 		}
 		else
 			ptrn_z[i] = ptrn_z[ii];
 	}
-	free(ptrn_z);
+	return ptrn_z;
 }
 
 
@@ -148,30 +139,24 @@ int getsize(char *str_buffer)
 	return size;
 }
 
-void match_str_pattern(char* str,struct pattern_info* info)
+
+
+
+
+
+void subs_str_to(char* str,struct pattern_info* info,char* to,int pre)
 {
-	int str_len = strlen(str);
-	int ptr_len = info->patlen;
-	char* cmbstr = malloc(str_len+ptr_len);
-	memcpy((void*)cmbstr,info->pat,ptr_len);
-	memcpy((void*)(cmbstr+ptr_len),str,str_len);
-	zMatch(cmbstr,info);
-	free(cmbstr);
-}
-
-
-
-void subs_str_to(char* str,char* pat,char* to,int pre)
-{
-	struct pattern_info* info = malloc(sizeof(struct pattern_info));
 	int tolen = strlen(to);
-	init_pattern(info,pat,pre);
-	match_str_pattern(str,info);
-	FOR_EACH(ptr,info->list.listhead)
+	struct llist* pos;
+	struct llist* head = &info->list.listhead;
+	int count = 0;
+	LIST_FOR_EACH(pos,head)
 	{
-		int index = (LIST_ENTRY(ptr,index_list,listhead))->index;
+		int index = (LIST_ENTRY(pos,index_list,listhead))->index;
 		for(int j=0;j<tolen;j++)
 			str[index+j] = to[j];
+		if(count==pre)
+			break;
 	}
 }
 
@@ -182,5 +167,13 @@ void add_index(index_list* list,int index)
 	struct llist* h = &(list->listhead);
 	struct llist* n = &(new_loc->listhead);
 	LIST_ADD(h,n);
+}
+
+
+void kmp_str_pattern(char* str,char* pat,struct pattern_info* info)
+{
+	init_pattern(info,pat);
+	kmpMatch(str,info);
+	return ;
 }
 

@@ -19,8 +19,8 @@
 			new_list->prev = head;
 #define LIST_REMOVE(list) list->prev->next = list->next;list->next->prev = list->prev;
 
-#define FOR_EACH(ptr,list_head) \
-for(struct llist* ptr=list_head.next;ptr!=&list_head;ptr=ptr->next)
+#define LIST_FOR_EACH(pos,head)\
+for (pos = (head)->next; pos != (head); pos = pos->next)
 
 
 struct llist

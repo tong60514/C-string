@@ -4,14 +4,23 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../matrix.c \
+../output.c \
+../polynomial.c \
 ../strsearch.c \
 ../zvalue.c 
 
 OBJS += \
+./matrix.o \
+./output.o \
+./polynomial.o \
 ./strsearch.o \
 ./zvalue.o 
 
 C_DEPS += \
+./matrix.d \
+./output.d \
+./polynomial.d \
 ./strsearch.d \
 ./zvalue.d 
 
