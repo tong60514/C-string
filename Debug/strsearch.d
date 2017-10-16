@@ -1,5 +1,7 @@
-strsearch.d: ../strsearch.c ../strsearch.h ../list.h
+strsearch.d: ../strsearch.c \
+ /home/tong60514/cuda-workspace/algorithm/include/strsearch.h \
+ /home/tong60514/cuda-workspace/algorithm/include/list.h
 
-../strsearch.h:
+/home/tong60514/cuda-workspace/algorithm/include/strsearch.h:
 
-../list.h:
+/home/tong60514/cuda-workspace/algorithm/include/list.h:

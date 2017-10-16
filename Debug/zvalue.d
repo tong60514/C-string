@@ -1,18 +1,34 @@
-zvalue.d: ../zvalue.c ../strsearch.h ../list.h ../bitmap.h \
- ../polynomial.h ../meta.h ../matrix.h ../output.h ../struct.h
+zvalue.d: ../zvalue.c \
+ /home/tong60514/cuda-workspace/algorithm/include/strsearch.h \
+ /home/tong60514/cuda-workspace/algorithm/include/list.h \
+ /home/tong60514/cuda-workspace/algorithm/include/list.h \
+ /home/tong60514/cuda-workspace/algorithm/include/bitmap.h \
+ /home/tong60514/cuda-workspace/algorithm/include/polynomial.h \
+ /home/tong60514/cuda-workspace/algorithm/include/meta.h \
+ /home/tong60514/cuda-workspace/algorithm/include/matrix.h \
+ /home/tong60514/cuda-workspace/algorithm/include/output.h \
+ /home/tong60514/cuda-workspace/algorithm/include/struct.h \
+ /home/tong60514/cuda-workspace/algorithm/include/polynomial.h \
+ /home/tong60514/cuda-workspace/algorithm/include/matrix.h
 
-../strsearch.h:
+/home/tong60514/cuda-workspace/algorithm/include/strsearch.h:
 
-../list.h:
+/home/tong60514/cuda-workspace/algorithm/include/list.h:
 
-../bitmap.h:
+/home/tong60514/cuda-workspace/algorithm/include/list.h:
 
-../polynomial.h:
+/home/tong60514/cuda-workspace/algorithm/include/bitmap.h:
 
-../meta.h:
+/home/tong60514/cuda-workspace/algorithm/include/polynomial.h:
 
-../matrix.h:
+/home/tong60514/cuda-workspace/algorithm/include/meta.h:
 
-../output.h:
+/home/tong60514/cuda-workspace/algorithm/include/matrix.h:
 
-../struct.h:
+/home/tong60514/cuda-workspace/algorithm/include/output.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/struct.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/polynomial.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/matrix.h:

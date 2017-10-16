@@ -1,5 +1,10 @@
-polynomial.d: ../polynomial.c ../polynomial.h ../meta.h
+polynomial.d: ../polynomial.c \
+ /home/tong60514/cuda-workspace/algorithm/include/polynomial.h \
+ /home/tong60514/cuda-workspace/algorithm/include/meta.h \
+ /home/tong60514/cuda-workspace/algorithm/include/bitmap.h
 
-../polynomial.h:
+/home/tong60514/cuda-workspace/algorithm/include/polynomial.h:
 
-../meta.h:
+/home/tong60514/cuda-workspace/algorithm/include/meta.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/bitmap.h:

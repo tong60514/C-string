@@ -90,7 +90,7 @@ void kmpMatch(char* str,struct pattern_info* info)
 int* zfunc(char* str)
 {
 	int strlen = getsize(str);
-	int* ptrn_z = malloc(sizeof(int)*(strlen));
+	int* _zarr = malloc(sizeof(int)*(strlen));
 
 	int L=0,R=0;
 	for(int i=1;i<strlen;i++)
@@ -100,24 +100,24 @@ int* zfunc(char* str)
 		{
 			int x = i;
 			while( x < strlen && str[x]==str[x-i])x++;
-			ptrn_z[i] = x-i;
+			_zarr[i] = x-i;
 			if(x>i)R=x-1;L=i;
 			if(str[x]==str[x-i])
-				ptrn_z[i]= x-i;
+				_zarr[i]= x-i;
 		}
-		else if(ptrn_z[ii]>=R-i+1)
+		else if(_zarr[ii]>=R-i+1)
 		{
 			int x = R+1;
 			while( x < strlen && str[x]==str[x-i])x++;
-			ptrn_z[i] = x-i;
+			_zarr[i] = x-i;
 			L = i;R = x-1;
 			if(str[x]==str[x-i])
-				ptrn_z[i]= x-i;
+				_zarr[i]= x-i;
 		}
 		else
-			ptrn_z[i] = ptrn_z[ii];
+			_zarr[i] = _zarr[ii];
 	}
-	return ptrn_z;
+	return _zarr;
 }
 
 

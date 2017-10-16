@@ -21,6 +21,18 @@
 #define BITS_PER_BYTE 8
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 #define BITS_TO_LONGS(nr) DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+
+
+
+static __always_inline void __clear_all(volatile unsigned long *addr)
+{
+	static const long zero = 0;
+	asm volatile("mov $0,%0 "
+			: ADDR
+			: "Ir"(zero)
+			:
+			  );
+}
 static __always_inline void __clear_bit(long nr, volatile unsigned long *addr)
 {
 	asm volatile("btr %1,%0" : ADDR : "Ir" (nr));
@@ -69,7 +81,6 @@ static inline int variable_test_bit(long nr, volatile const unsigned long *addr)
 		    "sbb %0,%0"
 		    : "=r" (oldbit)
 		    : "m" (*(unsigned long *)addr), "Ir" (nr));
-
 	return oldbit;
 }
 

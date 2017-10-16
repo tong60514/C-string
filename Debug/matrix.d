@@ -1,5 +1,10 @@
-matrix.d: ../matrix.c ../matrix.h ../meta.h
+matrix.d: ../matrix.c \
+ /home/tong60514/cuda-workspace/algorithm/include/matrix.h \
+ /home/tong60514/cuda-workspace/algorithm/include/meta.h \
+ /home/tong60514/cuda-workspace/algorithm/include/bitmap.h
 
-../matrix.h:
+/home/tong60514/cuda-workspace/algorithm/include/matrix.h:
 
-../meta.h:
+/home/tong60514/cuda-workspace/algorithm/include/meta.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/bitmap.h:

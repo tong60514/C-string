@@ -2,15 +2,17 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#define data_offset 0
 plyml* get_plyml(int length,...)
 {
 	va_list coef_list;
 	va_start( coef_list, length);
-	plyml* res = malloc(sizeof(plyml)+sizeof(int)*(length));
+	int data_size = sizeof(int)*(length);
+	plyml* res = malloc(sizeof(plyml)+data_size);
 
 	PLYML_LENGTH(res) = length;
-
+	res->meta.offset[data_offset] = data_size;
+	/* mem map to coef */
 	res->coef = (int*)(__META_OFFSET(res,sizeof(plyml)));
 
 	for(int i=0;i<length;i++)

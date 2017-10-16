@@ -1,12 +1,19 @@
-output.d: ../output.c ../output.h ../struct.h ../polynomial.h ../meta.h \
- ../matrix.h
+output.d: ../output.c \
+ /home/tong60514/cuda-workspace/algorithm/include/output.h \
+ /home/tong60514/cuda-workspace/algorithm/include/struct.h \
+ /home/tong60514/cuda-workspace/algorithm/include/polynomial.h \
+ /home/tong60514/cuda-workspace/algorithm/include/meta.h \
+ /home/tong60514/cuda-workspace/algorithm/include/bitmap.h \
+ /home/tong60514/cuda-workspace/algorithm/include/matrix.h
 
-../output.h:
+/home/tong60514/cuda-workspace/algorithm/include/output.h:
 
-../struct.h:
+/home/tong60514/cuda-workspace/algorithm/include/struct.h:
 
-../polynomial.h:
+/home/tong60514/cuda-workspace/algorithm/include/polynomial.h:
 
-../meta.h:
+/home/tong60514/cuda-workspace/algorithm/include/meta.h:
 
-../matrix.h:
+/home/tong60514/cuda-workspace/algorithm/include/bitmap.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/matrix.h:
