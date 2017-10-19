@@ -7,6 +7,8 @@
 #include "polynomial.h"
 #include "matrix.h"
 #include "output.h"
+#include <vector.h>
+#include <tpool.h>
 
 struct str_loc
 {
@@ -99,6 +101,23 @@ int main()
 	print_mat(l);
 	mat* PA = mat_mul_mat(xx->related.L_tri ,xx->related.U_tri);
 	print_mat(PA);
+	printf("-------test vector --------\n");
+	float a[]={
+			1.0,5.4,0.8,0.9,
+	};
+
+	vec* t = malloc_vector(a,4);
+	print_vec(t);
+	float idd[][4]={
+					{1.0,0.0,0.0,0.0},
+					{0.0,1.0,0.0,0.0},
+					{0.0,0.0,1.0,0.0},
+					{0.0,0.0,0.0,1.0}
+			};
+	mat* id = malloc_matrix(idd,4,4);
+	vec* res1 = mat_mul_vec(id,t);
+	print_vec(res1);
+
 
 	return 0;
 }

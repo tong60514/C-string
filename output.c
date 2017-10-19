@@ -17,3 +17,11 @@ void print_mat(mat* p)
 		printf(" | \n");
 	}
 }
+
+void print_vec(vec* p)
+{
+	printf("{ ");
+	for(int i=0;i<p->meta.length;i++)
+		printf(" %f, ",p->scal[i]);
+	printf(" }\n");
+}

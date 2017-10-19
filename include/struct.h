@@ -7,9 +7,9 @@
 
 #ifndef STRUCT_H_
 #define STRUCT_H_
-#include "polynomial.h"
-#include "matrix.h"
-
+#include <polynomial.h>
+#include <matrix.h>
+#include <vector.h>
 
 
 #endif /* STRUCT_H_ */

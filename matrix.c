@@ -4,7 +4,7 @@
 #include <bitmap.h>
 #include <math.h>
 #include <stdio.h>
-#define EXCHANGE_ARRAY(arr_1,arr_2,length) \
+#define __do_exchange_array(arr_1,arr_2,length) \
 do{ \
 	float exch;\
 	for(int __iter=0;__iter<length;__iter++){\
@@ -56,8 +56,8 @@ static inline void _free_relate_mat(mat* m)
 
 mat* mat_cpy(mat* m)
 {
-	mat* cpy = malloc(m->meta.mat_bytes);
-	memcpy(cpy,m,m->meta.mat_bytes);
+	mat* cpy = malloc(m->meta.bytes);
+	memcpy(cpy,m,m->meta.bytes);
 	return cpy;
 }
 
@@ -73,32 +73,36 @@ static mat* _malloc_mat(int row,int col)
 	int length = row*col;
 	ssize_t _bytes = sizeof(mat)+sizeof(float*)*col+sizeof(float)*length;
 	mat* matrix = malloc(_bytes);
-	if(matrix==NULL)
-		return NULL;
-	matrix->meta.offset[data_offset] = sizeof(mat)+sizeof(float*)*col;
-	matrix->meta.offset[index_offset] = sizeof(mat);
-	matrix->meta.mat_bytes = _bytes;
+	if(matrix!=NULL)
+	{
 
-	matrix->col = col;
-	matrix->row = row;
-	MATRIX_LENGTH(matrix) = length;
+		matrix->meta.offset[data_offset] = sizeof(mat)+sizeof(float*)*col;
+		matrix->meta.offset[index_offset] = sizeof(mat);
+		matrix->meta.data_bytes = sizeof(float)*length;
 
-	matrix->data = (float*)__META_OFFSET(matrix,matrix->meta.offset[data_offset]);
+		__META_SIZE_T(matrix->meta)= _bytes;
 
-	matrix->index = (float**)__META_OFFSET(matrix,matrix->meta.offset[index_offset]);
+		matrix->col = col;
+		matrix->row = row;
+		MATRIX_LENGTH(matrix) = length;
 
-	/* memory map to index */
-	for(int i=0;i<col;i++)
+		matrix->data = (float*)_get_offset(matrix,matrix->meta.offset[data_offset]);
+		matrix->index = (float**)_get_offset(matrix,matrix->meta.offset[index_offset]);
+
+		/* memory map to index */
+		for(int i=0;i<col;i++)
 		matrix->index[i] = &(matrix->data[i*row]);
-	/*check matrix property*/
-	if(row==col)
-		set_mat_flag(matrix,SQUQRE_MAT);
+		/*check matrix property*/
+		if(row==col)
+			set_mat_flag(matrix,SQUQRE_MAT);
+	}
 	return matrix;
 }
 mat* malloc_matrix(float* src,int row,int col)
 {
 	mat* matrix = _malloc_mat(row,col);
-	memcpy((void*)matrix->data,src,sizeof(float)*MATRIX_LENGTH(matrix));
+	if(matrix!=NULL)
+		memcpy((void*)matrix->data,src,matrix->meta.data_bytes);
 	return matrix;
 }
 
@@ -213,7 +217,7 @@ void LU_decomposite(mat* m)
 		m->related.per_mat[k] = m->related.per_mat[kp];
 		m->related.per_mat[kp] = exch;
 
-		EXCHANGE_ARRAY(MAT->index[kp],MAT->index[k],n);
+		__do_exchange_array(MAT->index[kp],MAT->index[k],n);
 		//exchange_col(m->index[kp],m->index[k],n);
 
 		for(int i=k+1;i<n;i++)
@@ -244,4 +248,6 @@ void LU_decomposite(mat* m)
 #undef COL
 #undef ROW
 }
+
+
 

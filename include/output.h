@@ -10,6 +10,6 @@
 #include "struct.h"
 void print_plyml(plyml* p);
 void print_mat(mat* p);
-
+void print_vec(vec* p);
 
 #endif /* OUTPUT_H_ */

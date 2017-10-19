@@ -15,11 +15,18 @@ struct metadata
 	int length;
 	DECLARE_BITMAP(ops,64);
 	ssize_t offset[META_MAX];
-	ssize_t mat_bytes;
+
+	ssize_t bytes;
+	ssize_t data_bytes;
 };
 
+
 #define __META_LENGTH(meta) meta.length
-#define __META_OFFSET(ptr,size_bytes) (((char*)ptr)+size_bytes)
+#define _get_offset(ptr,size_bytes) (((char*)ptr)+size_bytes)
+#define __META_SIZE_T(meta) meta.bytes
+
+
+
 
 #define data_offset 0
 #define index_offset 1

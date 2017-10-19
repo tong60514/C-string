@@ -8,8 +8,9 @@ zvalue.d: ../zvalue.c \
  /home/tong60514/cuda-workspace/algorithm/include/matrix.h \
  /home/tong60514/cuda-workspace/algorithm/include/output.h \
  /home/tong60514/cuda-workspace/algorithm/include/struct.h \
- /home/tong60514/cuda-workspace/algorithm/include/polynomial.h \
- /home/tong60514/cuda-workspace/algorithm/include/matrix.h
+ /home/tong60514/cuda-workspace/algorithm/include/vector.h \
+ /home/tong60514/cuda-workspace/algorithm/include/meta.h \
+ /home/tong60514/cuda-workspace/algorithm/include/tpool.h
 
 /home/tong60514/cuda-workspace/algorithm/include/strsearch.h:
 
@@ -29,6 +30,8 @@ zvalue.d: ../zvalue.c \
 
 /home/tong60514/cuda-workspace/algorithm/include/struct.h:
 
-/home/tong60514/cuda-workspace/algorithm/include/polynomial.h:
+/home/tong60514/cuda-workspace/algorithm/include/vector.h:
 
-/home/tong60514/cuda-workspace/algorithm/include/matrix.h:
+/home/tong60514/cuda-workspace/algorithm/include/meta.h:
+
+/home/tong60514/cuda-workspace/algorithm/include/tpool.h:

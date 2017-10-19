@@ -13,7 +13,7 @@ plyml* get_plyml(int length,...)
 	PLYML_LENGTH(res) = length;
 	res->meta.offset[data_offset] = data_size;
 	/* mem map to coef */
-	res->coef = (int*)(__META_OFFSET(res,sizeof(plyml)));
+	res->coef = (int*)(_get_offset(res,sizeof(plyml)));
 
 	for(int i=0;i<length;i++)
 		res->coef[i] = va_arg(coef_list,int);

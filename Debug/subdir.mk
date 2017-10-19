@@ -8,6 +8,7 @@ C_SRCS += \
 ../output.c \
 ../polynomial.c \
 ../strsearch.c \
+../vector.c \
 ../zvalue.c 
 
 OBJS += \
@@ -15,6 +16,7 @@ OBJS += \
 ./output.o \
 ./polynomial.o \
 ./strsearch.o \
+./vector.o \
 ./zvalue.o 
 
 C_DEPS += \
@@ -22,6 +24,7 @@ C_DEPS += \
 ./output.d \
 ./polynomial.d \
 ./strsearch.d \
+./vector.d \
 ./zvalue.d 
 
 

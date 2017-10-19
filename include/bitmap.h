@@ -23,6 +23,10 @@
 #define BITS_TO_LONGS(nr) DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
 
 
+#define test_bit(nr, addr)			\
+	(__builtin_constant_p((nr))                 \
+	 ? constant_test_bit((nr), (addr))	        \
+	 : variable_test_bit((nr), (addr)))
 
 static __always_inline void __clear_all(volatile unsigned long *addr)
 {
@@ -82,6 +86,12 @@ static inline int variable_test_bit(long nr, volatile const unsigned long *addr)
 		    : "=r" (oldbit)
 		    : "m" (*(unsigned long *)addr), "Ir" (nr));
 	return oldbit;
+}
+
+static __always_inline int constant_test_bit(long nr, const volatile unsigned long *addr)
+{
+	return ((1UL << (nr & (BITS_PER_LONG-1))) &
+		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
 }
 
 
