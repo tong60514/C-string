@@ -4,28 +4,37 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../main.c \
 ../matrix.c \
+../meta.c \
 ../output.c \
 ../polynomial.c \
 ../strsearch.c \
-../vector.c \
-../zvalue.c 
+../tpool.c \
+../value.c \
+../vector.c 
 
 OBJS += \
+./main.o \
 ./matrix.o \
+./meta.o \
 ./output.o \
 ./polynomial.o \
 ./strsearch.o \
-./vector.o \
-./zvalue.o 
+./tpool.o \
+./value.o \
+./vector.o 
 
 C_DEPS += \
+./main.d \
 ./matrix.d \
+./meta.d \
 ./output.d \
 ./polynomial.d \
 ./strsearch.d \
-./vector.d \
-./zvalue.d 
+./tpool.d \
+./value.d \
+./vector.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

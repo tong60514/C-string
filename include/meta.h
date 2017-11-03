@@ -9,26 +9,29 @@
 #define META_H_
 #include <stdlib.h>
 #include <bitmap.h>
-#define META_MAX 3
+
+typedef void (*preprocess)(struct metadata* meta);
 struct metadata
 {
-	int length;
+	void* data_mem_ptr;
 	DECLARE_BITMAP(ops,64);
-	ssize_t offset[META_MAX];
-
-	ssize_t bytes;
+	ssize_t struct_bytes;
 	ssize_t data_bytes;
+	preprocess prep;
 };
 
 
-#define __META_LENGTH(meta) meta.length
 #define _get_offset(ptr,size_bytes) (((char*)ptr)+size_bytes)
-#define __META_SIZE_T(meta) meta.bytes
 
 
 
 
-#define data_offset 0
-#define index_offset 1
+
+/* construct data flag */
+
+#define DEFAULT 0UL
+#define PASS_BY_POINTER 1UL
+
+
 
 #endif /* META_H_ */

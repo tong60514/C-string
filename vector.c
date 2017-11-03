@@ -2,24 +2,20 @@
 #include <string.h>
 #include <matrix.h>
 #include <assert.h>
-#define _vec_init_meta(meta,len,_bytes)\
-	do{\
-		__META_LENGTH(meta) = len;\
-		__META_SIZE_T(meta) = _bytes;\
-	}while(0);
 
 
-static vec* _malloc_vector(int length)
+
+
+static vec* _malloc_vector(const unsigned int length)
 {
 
-	ssize_t size = length*sizeof(float)+sizeof(vec);
-	vec* v = malloc(size);
+	vec* v = malloc(sizeof(vec));
 	if(v!=NULL)
 	{
-		_vec_init_meta(v->meta,length,size);
-		v->meta.offset[data_offset] = sizeof(vec);
+		v->length = length;
+		v->meta.struct_bytes = sizeof(vec);
 		v->meta.data_bytes = length*sizeof(float);
-		v->scal = (float*)_get_offset(v,sizeof(vec));
+		v->scal = malloc(v->meta.data_bytes);
 	}
 	return v;
 }
@@ -27,13 +23,13 @@ vec* malloc_vector(float* array,int length)
 {
 	vec* res = _malloc_vector(length);
 	if(res!=NULL)
-		memcpy(res->scal,array,length*sizeof(float));
+		memcpy(res->scal,array,res->meta.data_bytes);
 	return res;
 }
 
 vec* mat_mul_vec(mat* m,vec* v)
 {
-	assert(m->row==v->meta.length);
+	assert(m->row==v->length);
 	vec* res = _malloc_vector(m->col);
 	register float p asm("r15");
 	if(res!=NULL)
@@ -49,5 +45,12 @@ vec* mat_mul_vec(mat* m,vec* v)
 		}
 	}
 	return res;
+}
+
+
+void free_vector(vec* v)
+{
+	free(v->meta.data_mem_ptr);
+	free(v);
 }
 

@@ -4,8 +4,11 @@
 #include <stdlib.h>
 void print_plyml(plyml* p)
 {
-	for(int i=0;i<p->meta.length;i++)
-		printf("coef:%d x power:%d\n",p->coef[i],i);
+	printf("| ");
+	printf("%f ",p->coef[0]);
+	for(int i=1;i<p->length;i++)
+		printf(" + %f*x^%d ",p->coef[i],i);
+	printf(" |\n");
 }
 void print_mat(mat* p)
 {
@@ -21,7 +24,7 @@ void print_mat(mat* p)
 void print_vec(vec* p)
 {
 	printf("{ ");
-	for(int i=0;i<p->meta.length;i++)
+	for(int i=0;i<p->length;i++)
 		printf(" %f, ",p->scal[i]);
 	printf(" }\n");
 }

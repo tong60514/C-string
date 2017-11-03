@@ -13,9 +13,7 @@ typedef void *(*pthread_rout)(void *);
 
 struct pthread_routine
 {
-	int status;
-	pthread_rout task;
-	jmp_buf last_buf;
+	pthread_rout task_rt;
 };
 
 

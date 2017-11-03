@@ -4,6 +4,9 @@
 #include <bitmap.h>
 #include <math.h>
 #include <stdio.h>
+#include <vector.h>
+#include <meta.h>
+
 #define __do_exchange_array(arr_1,arr_2,length) \
 do{ \
 	float exch;\
@@ -25,10 +28,9 @@ static inline void exchange_col(float* a,float* b,int length)
 	}
 	return;
 }
-static inline void set_mat_flag(mat* m,long nr)
-{
-	__set_bit(nr,m->meta.ops);
-}
+
+#define set_mat_flag(mat,nr) __set_bit(nr,mat->meta.ops)
+#define test_mat_flag(mat,nr) test_bit(nr,mat->meta.ops)
 static inline void clear_mat_flag(mat* m,long nr)
 {
 	__clear_bit(nr,m->meta.ops);
@@ -39,70 +41,80 @@ static inline void clear_mat_all(mat* m)
 	__clear_all(m->meta.ops);
 }
 
-static inline int test_mat_flag(mat* m,long nr)
-{
-	return variable_test_bit(nr,m->meta.ops);
-}
+
 
 static inline void _free_relate_mat(mat* m)
 {
-	if(test_mat_flag(m,LSYS_SOLVED))
+	if(test_mat_flag(m,LUP_DECOMP))
 	{
-		free(m->related.L_tri);
-		free(m->related.U_tri);
+		free(m->related.LU_tri);
 		free(m->related.per_mat);
 	}
-}
-
-mat* mat_cpy(mat* m)
-{
-	mat* cpy = malloc(m->meta.bytes);
-	memcpy(cpy,m,m->meta.bytes);
-	return cpy;
 }
 
 void free_matrix(mat* m)
 {
 	_free_relate_mat(m);
+	free(m->meta.data_mem_ptr);
 	free(m);
 }
+static mat* _malloc_mat(int row,int col);
+mat* mat_cpy(mat* m)
+{
+	mat* cpy = _malloc_mat(m->row,m->col);
+	if(cpy!=NULL)
+		memcpy(cpy->meta.data_mem_ptr,m->meta.data_mem_ptr,m->meta.data_bytes);
+	return cpy;
+}
 
 
+
+
+/*allocate memory */
 static mat* _malloc_mat(int row,int col)
 {
-	int length = row*col;
-	ssize_t _bytes = sizeof(mat)+sizeof(float*)*col+sizeof(float)*length;
-	mat* matrix = malloc(_bytes);
+	unsigned int col_size = row*sizeof(float);
+	unsigned int matrix_size = row*col_size;
+	unsigned int index_array_size = col*sizeof(void*);
+	mat* matrix = malloc(sizeof(mat)+index_array_size);
 	if(matrix!=NULL)
 	{
+		matrix->index = (float**)_get_offset(matrix,sizeof(mat));
+		matrix->meta.data_bytes = matrix_size;
+		matrix->meta.struct_bytes = index_array_size+sizeof(mat);
+		matrix->meta.ops[0] = 0;
+		matrix->meta.data_mem_ptr = malloc(matrix_size);
 
-		matrix->meta.offset[data_offset] = sizeof(mat)+sizeof(float*)*col;
-		matrix->meta.offset[index_offset] = sizeof(mat);
-		matrix->meta.data_bytes = sizeof(float)*length;
-
-		__META_SIZE_T(matrix->meta)= _bytes;
-
-		matrix->col = col;
+		matrix->related.LU_tri = NULL;
+		matrix->related.per_mat = NULL;
 		matrix->row = row;
-		MATRIX_LENGTH(matrix) = length;
+		matrix->col = col;
 
-		matrix->data = (float*)_get_offset(matrix,matrix->meta.offset[data_offset]);
-		matrix->index = (float**)_get_offset(matrix,matrix->meta.offset[index_offset]);
+		/*map pointer*/
+		matrix->index[0] = matrix->meta.data_mem_ptr;
+		char* index_ptr = (char*)matrix->meta.data_mem_ptr;
+		for(int i = 1;i<col;i++)
+			matrix->index[i] = (float*)(index_ptr+=col_size);
 
-		/* memory map to index */
-		for(int i=0;i<col;i++)
-		matrix->index[i] = &(matrix->data[i*row]);
-		/*check matrix property*/
-		if(row==col)
+
+
+		if(matrix->row == matrix->col)
 			set_mat_flag(matrix,SQUQRE_MAT);
 	}
+
 	return matrix;
 }
-mat* malloc_matrix(float* src,int row,int col)
+
+
+
+mat* matrix(int row,int col,float* src_data_ptr)
 {
+
+	/*variable declartion*/
 	mat* matrix = _malloc_mat(row,col);
 	if(matrix!=NULL)
-		memcpy((void*)matrix->data,src,matrix->meta.data_bytes);
+		memcpy(matrix->meta.data_mem_ptr,src_data_ptr,matrix->meta.data_bytes);
+
 	return matrix;
 }
 
@@ -115,14 +127,10 @@ mat* mat_mul_mat(mat* mL,mat* mR)
 	mat* res =  _malloc_mat(mR->row,mL->col);
 
 	for(int res_row_index = 0;res_row_index<mR->row;res_row_index++)
-	{
 		for(int j=0;j<mL->col;j++)
 			for(int i=0;i<mR->col;i++)
-			{
 				res->index[j][res_row_index] +=
 						mL->index[j][i]*mR->index[i][res_row_index];
-			}
-	}
 	return res;
 
 }
@@ -179,28 +187,28 @@ mat* mat_trans(mat* m)
 			trans->index[j][i] = m->index[i][j];
 	return trans;
 }
-void LU_decomposite(mat* m)
-{
+
 #define ROW n
 #define COL n
+#define MAT m->related.LU_tri
+void LU_decomposite(mat* m)
+{
 	assert(test_mat_flag(m,SQUQRE_MAT));
 	int n = m->col;
-	set_mat_flag(m,LSYS_SOLVED);
-
-	m->related.U_tri = _malloc_mat(ROW,COL);
-	m->related.L_tri = mat_cpy(m);
+	set_mat_flag(m,LUP_DECOMP);
+	m->related.LU_tri = mat_cpy(m);
 	m->related.per_mat = malloc(sizeof(int)*COL);
 	/*init permutation matrix
 	 * represent by an array */
 	for(int i=0; i < COL ; i++)
 		m->related.per_mat[i] = i;
-	/*decompsite L and U tri matrix*/
-#define MAT m->related.L_tri
+	/*decompsite L and U tri matrix  into LU_tri*/
 
+	int kp;
+	int exch;
 	for(int k=0;k<ROW;k++)
 	{
 		float p = 0.0f;
-		int kp;
 		for(int i = k;i<n;i++)
 		{
 			if(fabs(MAT->index[i][k])>p)
@@ -211,9 +219,12 @@ void LU_decomposite(mat* m)
 		}
 
 		if(p==0.0f)
+		{
+			set_mat_flag(m,SINGULAR);
 			return;
+		}
 
-		int exch = m->related.per_mat[k];
+		exch = m->related.per_mat[k];
 		m->related.per_mat[k] = m->related.per_mat[kp];
 		m->related.per_mat[kp] = exch;
 
@@ -227,26 +238,82 @@ void LU_decomposite(mat* m)
 				MAT->index[i][j]-=MAT->index[i][k]*MAT->index[k][j];
 		}
 	}
+
+
+	/*end  of decomposition */
+
+
+}
 #undef MAT
-	/*end of first part of decompose */
-#define UP_TRI m->related.U_tri
-#define LOW_TRI m->related.L_tri
-	/*saperate the matrix*/
-	for(int r = 0; r<n  ;r++)
+#undef COL
+#undef ROW
+
+
+/*PA = LU
+ *
+ * want ot find Ax = yCOL
+ * x = ?
+ *
+ * PAx = Py ,
+ *
+ * */
+
+float* mul_P_mat(int* perm, vec* y)
+{
+	float* res = malloc(y->meta.data_bytes);
+
+	for(int i=0;i<y->length;i++)
+		res[i] = y->scal[perm[i]];
+
+	return res;
+}
+
+
+#define ROW n
+#define COL n
+#define LU_mat A->related.LU_tri
+vec* linear_equation(mat* A,vec* y)
+{
+	//const static unsigned long buf_size = ;
+
+
+	int n = A->row;
+	assert(A->row == y->length);
+	assert(test_mat_flag(A,SQUQRE_MAT));
+	if(!test_mat_flag(A,LUP_DECOMP))
+		LU_decomposite(A);
+	/* have to be free */
+	float* res_vec = mul_P_mat(A->related.per_mat,y);
+
+	for(int i=0;i<ROW;i++)
+		for(int j=i+1;j<COL;j++)
+			res_vec[j] -= LU_mat->index[j][i] * res_vec[i];
+
+	for(int i=ROW-1;i>=0;i--)
 	{
-		for(int c=r;c<n ;c++)
-		{
-			UP_TRI->index[r][c] = LOW_TRI->index[r][c];
-			LOW_TRI->index[r][c] = 0;
-		}
-		LOW_TRI->index[r][r] = 1.0f;
+		res_vec[i]/=LU_mat->index[i][i];
+		for(int j=i-1;j>=0;j--)
+			res_vec[j] -= (LU_mat->index[j][i] * res_vec[i]);
 	}
 
 
+	vec* res = malloc_vector(res_vec,n);
 
+	free(res_vec);
 
-#undef COL
+	return res;
+}
 #undef ROW
+#undef COL
+#undef LU_mat
+mat* inverse_mat(mat* A)
+{
+	assert(test_mat_flag(A,SQUQRE_MAT));
+	assert(!test_mat_flag(A,SINGULAR));
+
+	mat* res = _malloc_mat(A->row ,A->col);
+
+
 }
 
 

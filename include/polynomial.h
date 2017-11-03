@@ -1,17 +1,19 @@
 #ifndef POLYNOMIAL_H_
 #define POLYNOMIAL_H_
-#include "meta.h"
+#include <meta.h>
 
 typedef struct polynomial
 {
 	struct metadata meta;
-	int* coef;
+	unsigned long length;
+	float* coef;
+
 }plyml;
 
-plyml* get_plyml(int length,...);
+plyml* get_plyml( int length,...);
+float eval_plyml(plyml* p,float x);
 
 
-#define PLYML_LENGTH(p) __META_LENGTH(p->meta)
 
 
 #endif

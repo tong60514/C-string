@@ -11,6 +11,7 @@
 typedef struct vector
 {
 	struct metadata meta;
+	unsigned long length;
 	float* scal;
 }vec;
 
