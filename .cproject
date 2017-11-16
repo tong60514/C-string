@@ -92,6 +92,7 @@
 								<option id="gnu.c.link.option.ldflags.1631754758" name="Linker flags" superClass="gnu.c.link.option.ldflags" value="-pg " valueType="string"/>
 								<option id="gnu.c.link.option.libs.1102537462" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="m"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.22145158" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

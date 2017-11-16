@@ -10,9 +10,9 @@ typedef struct polynomial
 
 }plyml;
 
-plyml* get_plyml( int length,...);
+plyml* polynomial(int length,...);
 float eval_plyml(plyml* p,float x);
-
+float bisection(float (*func)(float x),float a,float b);
 
 
 

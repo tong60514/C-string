@@ -1,4 +1,4 @@
-#include <meta.h>
+
 #include <string.h>
 #include <struct.h>
 #include <stdlib.h>
@@ -17,10 +17,7 @@
 
 
 
-void free_data(struct metadata* meta)
-{
-	free(meta->data_mem_ptr);
-}
+
 
 
 inline void init_meta(struct metadata* meta,void* data,ssize_t data_size,ssize_t extra)

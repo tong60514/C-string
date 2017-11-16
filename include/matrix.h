@@ -2,8 +2,8 @@
 #define MATRIX_H_
 
 #include <x86intrin.h>
+#include <meta.h>
 #include <vector.h>
-#include "meta.h"
 typedef struct matrix mat;
 struct related_matrix
 {
@@ -33,7 +33,7 @@ mat* mat_mul_mat(mat* mL,mat* mR);
 void mat_mul_const(mat* m,float c);
 mat* mat_add_mat(mat* a,mat* b);
 
-#define MATRIX_LENGTH(mat) __META_LENGTH(mat->meta)
+
 
 mat* mul2x2(mat* a,mat* b);
 
@@ -43,14 +43,13 @@ mat* mat_cpy(mat* m);
 void LU_decomposite(mat* m);
 
 mat* inverse_mat(mat* A);
-#define MATRIX_SET_ZERO(m) \
-	memset((void*)m->data,0,MATRIX_LENGTH(m)*sizeof(float));
+
 
 
 vec* linear_equation(mat* A,vec* y);
 
 float* mul_P_mat(int* perm, vec* y);
-
+vec* iter_jocabi(mat* A,vec* b);
 /* flag */
 #define SQUQRE_MAT 0
 #define LUP_DECOMP 1

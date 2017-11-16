@@ -15,7 +15,7 @@ typedef struct vector
 	float* scal;
 }vec;
 
-vec* malloc_vector(float* array , int length);
+vec* vector(float* array , int length);
 
 
 #endif /* VECTOR_H_ */

@@ -2,8 +2,9 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #define data_offset 0
-plyml* get_plyml( int length,...)
+plyml* polynomial( int length,...)
 {
 	plyml* res;
 	int data_size = sizeof(float)*length;
@@ -46,3 +47,26 @@ float eval_plyml(plyml* p,float x)
 	}
 	return res;
 }
+
+float bisection(float (*func)(float x),float a,float b)
+{
+
+	float fc = 100.0;
+	float c;
+
+	while(fabs(fc)>0.00001f)
+	{
+		c = (a+b)/2;
+		fc = func(c);
+		if(fc==0.0)
+			return c;
+		if(fc>0.0)
+			b = c;
+		else
+			a = c;
+	}
+	return c;
+}
+
+
+

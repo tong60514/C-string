@@ -1,11 +1,14 @@
-#include <matrix.h>
+
 #include <string.h>
 #include <assert.h>
-#include <bitmap.h>
 #include <math.h>
 #include <stdio.h>
-#include <vector.h>
-#include <meta.h>
+#include <matrix.h>
+#include <output.h>
+#include <math.h>
+
+
+
 
 #define __do_exchange_array(arr_1,arr_2,length) \
 do{ \
@@ -40,6 +43,8 @@ static inline void clear_mat_all(mat* m)
 {
 	__clear_all(m->meta.ops);
 }
+
+
 
 
 
@@ -158,8 +163,8 @@ mat* mul2x2(mat* a,mat* b)
 	res->index[1][1] = m1 - m2 + m3 + m6;
 	return res;
 }
-mat* mul3x3(mat* a,mat* b);
-mat* mul4x4(mat* a,mat* b);
+mat* mul3x3(mat* a,mat* res);
+mat* mul4x4(mat* a,mat* res);
 
 void mat_mul_const(mat* a,float c)
 {
@@ -190,7 +195,7 @@ mat* mat_trans(mat* m)
 
 #define ROW n
 #define COL n
-#define MAT m->related.LU_tri
+#define LUMAT m->related.LU_tri
 void LU_decomposite(mat* m)
 {
 	assert(test_mat_flag(m,SQUQRE_MAT));
@@ -211,9 +216,9 @@ void LU_decomposite(mat* m)
 		float p = 0.0f;
 		for(int i = k;i<n;i++)
 		{
-			if(fabs(MAT->index[i][k])>p)
+			if(fabs(LUMAT->index[i][k])>p)
 			{
-				p = fabs(MAT->index[i][k]);
+				p = fabs(LUMAT->index[i][k]);
 				kp = i;
 			}
 		}
@@ -228,14 +233,14 @@ void LU_decomposite(mat* m)
 		m->related.per_mat[k] = m->related.per_mat[kp];
 		m->related.per_mat[kp] = exch;
 
-		__do_exchange_array(MAT->index[kp],MAT->index[k],n);
+		__do_exchange_array(LUMAT->index[kp],LUMAT->index[k],n);
 		//exchange_col(m->index[kp],m->index[k],n);
 
 		for(int i=k+1;i<n;i++)
 		{
-			MAT->index[i][k]/=MAT->index[k][k];
+			LUMAT->index[i][k]/=LUMAT->index[k][k];
 			for(int j=k+1;j<n;j++)
-				MAT->index[i][j]-=MAT->index[i][k]*MAT->index[k][j];
+				LUMAT->index[i][j]-=LUMAT->index[i][k]*LUMAT->index[k][j];
 		}
 	}
 
@@ -244,7 +249,7 @@ void LU_decomposite(mat* m)
 
 
 }
-#undef MAT
+#undef LUMAT
 #undef COL
 #undef ROW
 
@@ -297,7 +302,7 @@ vec* linear_equation(mat* A,vec* y)
 	}
 
 
-	vec* res = malloc_vector(res_vec,n);
+	vec* res = vector(res_vec,n);
 
 	free(res_vec);
 
@@ -311,10 +316,114 @@ mat* inverse_mat(mat* A)
 	assert(test_mat_flag(A,SQUQRE_MAT));
 	assert(!test_mat_flag(A,SINGULAR));
 
-	mat* res = _malloc_mat(A->row ,A->col);
+
+	return NULL;
+}
+
+static void _mat_mul_vec(mat* A,float* x,float* res)
+{
+	for(int i=0;i<A->col;i++)
+	{
+		res[i]=0.0;
+		for(int j=0;j<A->row;j++)
+			res[i]+= x[j]*(A->index[i][j]);
+	}
+}
+
+vec* mat_mul_vec(mat* A,vec* x)
+{
+	float* v = malloc(sizeof(float)*A->col);
+	_mat_mul_vec(A,x->scal,v);
+	return vector(v,A->col);
+}
+/*  res = b - a */
+static void _vec_sub(int length, float* a, float* b,float* res)
+{
+	for(int i=0;i<length;i++)
+		res[i] = a[i]-b[i];
+}
+/* res[i]  = b[i] + a[i]*/
+static void _vec_add(int length, float* a, float* b,float* res)
+{
+	for(int i=0;i<length;i++)
+		res[i] = a[i]+b[i];
+}
+#define MASK (1<<31)
+static void do_jocabi_iter(mat* R,mat* invD,float* b,float* x)
+{
+	int convg = 0;
+
+	int n = invD->col;
+	float* x1 = malloc(sizeof(float)*2*n);
+	float* res = x1+n;
+	while(!convg)
+	{
+		_mat_mul_vec(R,x,res);
+		_vec_sub(n,b,res,res);
+		_mat_mul_vec(invD,res,x1);
+
+		//(invD*(b-R*x))
+		convg = 1;
+		for(int i=0;i<n;i++)
+			convg&=( fabs(x[i]-x1[i]) < 0.00001);
+
+		for(int i=0;i<n;i++)
+			x[i]=x1[i];
+
+
+		/*printf("{ ");
+		for(int i=0;i<n;i++)
+		{
+			printf("%f ",x1[i]);
+			x[i]=x1[i];
+		}
+		printf(" } \n");*/
+
+	}
+	free(x1);
 
 
 }
+
+vec* iter_jocabi(mat* A,vec* b)
+{
+	float* guess = malloc(A->col*sizeof(float));
+	for(int i=0;i<A->row;i++)
+		guess[i] = 0.0;
+
+	mat* D = _malloc_mat(A->row,A->col);
+	mat* R = _malloc_mat(A->row,A->col);
+
+	for(int i=0;i<A->row;i++)
+	{
+		for(int j=0;j<A->col;j++)
+		{
+			if(i==j)
+			{
+				D->index[i][j] = A->index[i][j];
+				R->index[i][j] = 0.0;
+			}
+			else
+			{
+				R->index[i][j] = A->index[i][j];
+				D->index[i][j] = 0.0;
+			}
+		}
+
+	}
+	/* inverse D */
+	for(int i=0;i<D->row;i++)
+			D->index[i][i] = 1.0/D->index[i][i];
+
+	do_jocabi_iter(R,D,b->scal,guess);
+	vec* res = vector(guess,A->col);
+
+	return res;
+
+}
+
+
+
 
 
 

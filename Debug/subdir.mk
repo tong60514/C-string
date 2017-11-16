@@ -6,10 +6,10 @@
 C_SRCS += \
 ../main.c \
 ../matrix.c \
-../meta.c \
 ../output.c \
 ../polynomial.c \
 ../strsearch.c \
+../struct.c \
 ../tpool.c \
 ../value.c \
 ../vector.c 
@@ -17,10 +17,10 @@ C_SRCS += \
 OBJS += \
 ./main.o \
 ./matrix.o \
-./meta.o \
 ./output.o \
 ./polynomial.o \
 ./strsearch.o \
+./struct.o \
 ./tpool.o \
 ./value.o \
 ./vector.o 
@@ -28,10 +28,10 @@ OBJS += \
 C_DEPS += \
 ./main.d \
 ./matrix.d \
-./meta.d \
 ./output.d \
 ./polynomial.d \
 ./strsearch.d \
+./struct.d \
 ./tpool.d \
 ./value.d \
 ./vector.d 

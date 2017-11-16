@@ -1,4 +1,4 @@
-#include <vector.h>
+#include <struct.h>
 #include <string.h>
 #include <matrix.h>
 #include <assert.h>
@@ -19,7 +19,7 @@ static vec* _malloc_vector(const unsigned int length)
 	}
 	return v;
 }
-vec* malloc_vector(float* array,int length)
+vec* vector(float* array,int length)
 {
 	vec* res = _malloc_vector(length);
 	if(res!=NULL)
@@ -27,7 +27,7 @@ vec* malloc_vector(float* array,int length)
 	return res;
 }
 
-vec* mat_mul_vec(mat* m,vec* v)
+/*vec* mat_mul_vec(mat* m,vec* v)
 {
 	assert(m->row==v->length);
 	vec* res = _malloc_vector(m->col);
@@ -45,7 +45,7 @@ vec* mat_mul_vec(mat* m,vec* v)
 		}
 	}
 	return res;
-}
+}*/
 
 
 void free_vector(vec* v)

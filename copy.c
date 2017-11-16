@@ -7,7 +7,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <meta.h>
+#include <struct.h>
 void* copy(struct metadata* m);
 void* copy(struct metadata* m)
 {
@@ -15,4 +15,5 @@ void* copy(struct metadata* m)
 	memcpy(res,m,m->struct_bytes);
 	res->data_mem_ptr = malloc(m->data_bytes);
 	memcpy(res->data_mem_ptr,m->data_mem_ptr,m->data_bytes);
+	return res;
 }

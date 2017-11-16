@@ -86,6 +86,10 @@
 
 #define SET_BIT(addr,nr) __set_bit(nr,addr);
 #define CLEAR_BIT(addr,nr) __clear_bit(nr,addr);
+#ifndef __always_inline
+#define __always_inline __attribute__((always_inline)) inline
+#endif
+
 static __always_inline void __clear_all(volatile unsigned long *addr)
 {
 	static const long zero = 0;

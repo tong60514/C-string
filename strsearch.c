@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "strsearch.h"
+#include <strsearch.h>
 int getsize(char *str_buffer);
 
 
-static void init_pattern(struct pattern_info* info,char *pattern)
+void init_pattern(struct pattern_info* info,char *pattern)
 {
 	int pattern_length = strlen(pattern);
 	info->patlen = pattern_length;
