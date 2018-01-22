@@ -18,11 +18,11 @@
 
 
 typedef union data_type data_t;
-typedef struct polynomial plyml;
+
 typedef struct matrix mat;
 typedef struct vector vec;
 
-
+typedef struct polynomial plyml;
 typedef union data_type
 {
 	struct metadata meta;
@@ -34,16 +34,12 @@ typedef union data_type
 
 
 
+void free_data_t(data_t* d);
+#define FREE_T(d) free_data_t((data_t*)d);
 
 
 
-__always_inline inline void free_data_t(data_t* d)
-{
-	if(d->meta._delete)
-		d->meta._delete(d);
-	free(d->meta.data_mem_ptr);
-	free(d);
-}
+
 
 
 

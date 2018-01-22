@@ -8,7 +8,9 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include search/subdir.mk
 -include include/subdir.mk
+-include datatype/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -29,7 +31,7 @@ all: algorithm
 algorithm: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L/usr/lib/x86_64-linux-gnu -o "algorithm" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/home/tong60514/cuda-workspace/algorithm/Debug -o "algorithm" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

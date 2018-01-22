@@ -17,11 +17,21 @@
 			new_list->next = head->next;\
 			head->next = new_list;\
 			new_list->prev = head;
+#define list_add(head,new_list)\
+			head.next->prev = &new_list;\
+			new_list.next = head.next;\
+			head.next = &new_list;\
+			new_list.prev = &head;
 #define LIST_REMOVE(list) list->prev->next = list->next;list->next->prev = list->prev;
 
 #define LIST_FOR_EACH(pos,head)\
 for (pos = (head)->next; pos != (head); pos = pos->next)
 
+#define LIST_SWAP(old_nd,new_nd) \
+	new_nd.prev  = old_nd.prev;\
+	new_nd.next  = old_nd.next;\
+	old_nd.prev->next = &new_nd;\
+	old_nd.next->prev = &new_nd
 
 struct llist
 {

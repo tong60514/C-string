@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strsearch.h>
-int getsize(char *str_buffer);
 
 
 void init_pattern(struct pattern_info* info,char *pattern)
@@ -49,11 +48,11 @@ void kmpMatch(char* str,struct pattern_info* info)
  	 *  the failure function will look like this:
  	 *  F = { 0, 0,0,0,1,2,1,1,2,0 }
  	 *  F[n] will have n-1's failure value
- 	 *	the reason I do this is  I want to
+ 	 *	the reason  doing  this is   to
  	 *	reduce the caculation when the compare fail (caculate n-1)
  	 *	to index the previous f()
  	 *  the first element is means
- 	 *  when no char match while loop will decrease q to zero
+ 	 *  when no char matched the  while loop will decrease q to zero
  	 *  and chech the first char */
 	/*pattern part*/
 	int pat_length = strlen(info->pat);
@@ -89,17 +88,17 @@ void kmpMatch(char* str,struct pattern_info* info)
 
 int* zfunc(char* str)
 {
-	int strlen = getsize(str);
-	int* _zarr = malloc(sizeof(int)*(strlen));
+	int strlength = strlen(str);
+	int* _zarr = malloc(sizeof(int)*(strlength));
 
 	int L=0,R=0;
-	for(int i=1;i<strlen;i++)
+	for(int i=1;i<strlength;i++)
 	{
 		int ii = i-L;
 		if(i>R)
 		{
 			int x = i;
-			while( x < strlen && str[x]==str[x-i])x++;
+			while( x < strlength && str[x]==str[x-i])x++;
 			_zarr[i] = x-i;
 			if(x>i)R=x-1;L=i;
 			if(str[x]==str[x-i])
@@ -108,7 +107,7 @@ int* zfunc(char* str)
 		else if(_zarr[ii]>=R-i+1)
 		{
 			int x = R+1;
-			while( x < strlen && str[x]==str[x-i])x++;
+			while( x < strlength && str[x]==str[x-i])x++;
 			_zarr[i] = x-i;
 			L = i;R = x-1;
 			if(str[x]==str[x-i])
@@ -122,22 +121,7 @@ int* zfunc(char* str)
 
 
 #define BUFFERLEN 1024
-int getsize(char *str_buffer)
-{
-	ssize_t size = 0;
-	char *ptr = str_buffer;
-	int i = 1023;
-	while(i==1023)
-	{
-		for(i=0;i<1024;i++)
-		{
-			if(ptr[i]=='\0')
-				break;
-			size++;
-		}
-	}
-	return size;
-}
+
 
 
 

@@ -9,7 +9,7 @@
 extern int errno;
 
 
-#define DEBUG
+
 #ifdef DEBUG
 #define __pthread_mutex_debug_(func,mesg) \
 		do{\
@@ -90,8 +90,8 @@ extern int errno;
 		}\
 	}while(0)
 #else
-#define PTHREAD_MUTEX_LOCK(mutex)      pthread_mutex_lock(arg)
-#define PTHREAD_MUTEX_UNLOCK(mutex)    pthread_mutex_unlock(arg)
+#define PTHREAD_MUTEX_LOCK(mutex)      pthread_mutex_lock(mutex)
+#define PTHREAD_MUTEX_UNLOCK(mutex)    pthread_mutex_unlock(mutex)
 #define PTHREAD_MUTEX_INIT(mutex,attr) pthread_mutex_init(mutex,attr)
 #define PTHREAD_MUTEX_DESTROY(mutex)   pthread_mutex_destroy(mutex)
 #define PTHREAD_COND_INIT(cond,attr)   pthread_cond_init(cond,attr)

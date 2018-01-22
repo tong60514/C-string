@@ -12,14 +12,21 @@
 #define BUFFER_SIZE 4096
 #endif
 
-typedef struct circular_buf
+#include <bitmap.h>
+#include <stdlib.h>
+typedef struct circular_buffer
 {
 	char buf[BUFFER_SIZE];
 	char buf_end;
 
+
+
+	unsigned long flag[1];
 	unsigned long head;
 	unsigned long tail;
 }cc_buf;
+
+
 
 
 
@@ -86,5 +93,8 @@ static __always_inline inline void do_read_buf_all(cc_buf* b,char* data)
 		((cc_buf*)c)->head = 0;\
 		((cc_buf*)c)->tail = 0;\
 	}while(0)
+
+
+
 
 #endif /* BUFFER_H_ */
